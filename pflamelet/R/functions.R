@@ -15,8 +15,8 @@
 
 #' Persistence Flamelet Function
 #'
-#'  Computes the Persistence Flamelets from a list of Persistence Diagrams. If X is a matrix or a dataframe the function computes the flamelets of the
-#'  kernel density estimator computed on X.
+#' Computes the Persistence Flamelets from a list of Persistence Diagrams. If X is a matrix or a dataframe the function computes the flamelets of the
+#' kernel density estimator computed on X.
 #'
 #'@param X   a list of persistence diagrams representing the scale-space family at different resolution.
 #'            If \code{X} is a n-by-d matrix or a data.frame containing a d-dimensional pointcloud,
@@ -31,12 +31,14 @@
 #'             specifying spaces between elements on the grid
 #'@param scale a logical indicating whether or not the Persistence Diagrams have to be scaled to be in the same range (needed only for visualization purposes)
 #'@examples
-#' library(TDA)
-#' xx = rbind(circleUnif(50, 1), circleUnif(50, 1.5) + 3)
-#' Xlim = c(-1, 5);  Ylim = c(-1, 5);  by = 0.05
-#' lim = cbind(Xlim, Ylim)
-#' foo.flamelet = build.flamelet(X = xx, h.grid = seq(0.01, 1, length.out = 40), base.type = "landscape", dimension = 1,base.param = 1, lim = lim, by = by,
-#                               tseq = seq(0, .75, length.out = 500))
+#'
+#'## library(TDA)
+#'## xx = rbind(circleUnif(50, 1), circleUnif(50, 1.5) + 3)
+#'## Xlim = c(-1, 5);  Ylim = c(-1, 5);  by = 0.05
+#'## lim = cbind(Xlim, Ylim)
+#'## foo.flamelet = build.flamelet(X = xx, h.grid = seq(0.01, 1, length.out = 40),
+#'## base.type = "landscape", dimension = 1,base.param = 1, lim = lim, by = by,
+# ##                              tseq = seq(0, .75, length.out = 500))
 #'@export
 build.flamelet = function(X, base.type = "landscape", base.param = 1, dimension=1, tseq, h.grid =NULL, lim = NULL, by=NULL, scale = TRUE){
 
@@ -61,6 +63,10 @@ build.flamelet = function(X, base.type = "landscape", base.param = 1, dimension=
   return(flamelet)
 
 }
+
+
+
+
 
 
 # if (plot) {
