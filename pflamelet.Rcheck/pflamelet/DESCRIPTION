@@ -12,3 +12,6 @@ Imports: TDA, plotly, viridis
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
+NeedsCompilation: no
+Packaged: 2019-08-29 14:14:13 UTC; tulliapadellini
+Built: R 3.6.1; ; 2019-08-29 14:14:16 UTC; unix
