@@ -40,7 +40,9 @@
 #'## base.type = "landscape", dimension = 1,base.param = 1, lim = lim, by = by,
 # ##                              tseq = seq(0, .75, length.out = 500))
 #'@export
-build.flamelet = function(X, base.type = "landscape", base.param = 1, dimension=1, tseq, h.grid =NULL, lim = NULL, by=NULL, scale = TRUE){
+build.flamelet = function(X, base.type = "landscape", base.param = 1, dimension=1,
+                          tseq, diag.fun = distFct, h.grid =NULL, lim = NULL, by=NULL,
+                          scale = TRUE, precomputed.diagram = FALSE, sublevel = TRUE, info.message = FALSE){
 
   if(!is.list(X)){
     f = function(h) {
@@ -50,16 +52,29 @@ build.flamelet = function(X, base.type = "landscape", base.param = 1, dimension=
       return(diagr)
     }
 
-    cat("Computing the Persistence Diagrams - hold on, this is the longest step...")
-    diagListh = lapply(h.grid, f)
-    cat(" and now the Persistence Landscapes")
+    if(info.message) cat("Computing the Persistence Diagrams - hold on, this is the longest step...")
+    diagList = lapply(h.grid, f)
+    if(info.message) cat(" and now the Persistence Landscapes")
 
   } else {
-    diagListh = X
+    if(precomputed.diagram) diagListh = X
+    else{
+
+      f = function(x) {
+        diagr = gridDiag(x, diag.fun, lim = lim, by = by, sublevel = sublevel,
+                         location = FALSE, printProgress = FALSE, maxdimension = dimension)$diagram
+        return(diagr)
+      }
+
+      if(info.message) cat("Computing the Persistence Diagrams - hold on, this is the longest step...")
+      diagList = lapply(X, f)
+      if(info.message) cat(" and now the Persistence Landscapes")
+
+    }
   }
 
-  if(base.type == "landscape") flamelet = sapply(diagListh, landscape, dimension = dimension, KK = base.param, tseq = tseq)
-  if(base.type == "silhouette") flamelet = sapply(diagListh, silhouette, dimension = dimension, p = base.param, tseq = tseq)
+  if(base.type == "landscape") flamelet = sapply(diagList, landscape, dimension = dimension, KK = base.param, tseq = tseq)
+  if(base.type == "silhouette") flamelet = sapply(diagList, silhouette, dimension = dimension, p = base.param, tseq = tseq)
   return(flamelet)
 
 }
@@ -93,27 +108,46 @@ build.flamelet = function(X, base.type = "landscape", base.param = 1, dimension=
 #'## base.type = "landscape", dimension = 1,base.param = 1, lim = lim, by = by,
 # ##                              tseq = seq(0, .75, length.out = 500))
 #'@export
-build.flamelet = function(X, base.type = "landscape", base.param = 1, dimension=1, tseq, h.grid =NULL, lim = NULL, by=NULL, scale = TRUE){
+flamelet.band = function(X, B, alpha, base.type = "landscape", base.param = 1, dimension=1,
+                         tseq, diag.fun = distFct, h.grid =NULL, lim = NULL, by=NULL,
+                         sublevel = TRUE){
+  # X: list of data
+  # diag.build: function to build the diagrams
+  # B: number of bootstrap rep
 
-  if(!is.list(X)){
-    f = function(h) {
-      diagr = gridDiag(X, kde, lim = lim, by = by, sublevel = FALSE,
-                       location = FALSE, printProgress = FALSE, h = h, maxdimension = dimension)$diagram
-      if(scale) diagr[,2:3] = diagr[,2:3]/diagr[1,3]
-      return(diagr)
+  # if X is a matrix
+
+
+  if(is.list(X)){
+  f = function(){
+    subset.idx = sample(1:nrow(X[[1]]), size = nrow(X[[1]]), replace = T)
+    Xs = lapply(X, function(x) x[subset.idx, ])
+    Xf = build.flamelet(Xs, base.type = base.type, base.param = base.param, dimension=,
+                                tseq=tseq, diag.fun = diag.fun, h.grid = h.grid, lim = lim, by= by,
+                                scale = FALSE, precomputed.diagram = FALSE, sublevel = sublevel, info.message = FALSE)
+    return(max(Xf))
+
+  }
+  } else{
+
+    f = function(){
+      subset.idx = sample(1:nrow(X), size = nrow(X), replace = T)
+      Xs = X[subset.idx, ]
+      Xf = build.flamelet(Xs, base.type = base.type, base.param = base.param, dimension=,
+                          tseq=tseq, diag.fun = diag.fun, h.grid = h.grid, lim = lim, by= by,
+                          scale = FALSE, precomputed.diagram = FALSE, sublevel = sublevel, info.message = FALSE)
+      return(max(Xf))
+
     }
 
-    cat("Computing the Persistence Diagrams - hold on, this is the longest step...")
-    diagListh = lapply(h.grid, f)
-    cat(" and now the Persistence Landscapes")
 
-  } else {
-    diagListh = X
+
   }
 
-  if(base.type == "landscape") flamelet = sapply(diagListh, landscape, dimension = dimension, KK = base.param, tseq = tseq)
-  if(base.type == "silhouette") flamelet = sapply(diagListh, silhouette, dimension = dimension, p = base.param, tseq = tseq)
-  return(flamelet)
+  bvect = pbapply::pbreplicate(B, f())
+
+  return(quantile(bvect, alpha))
+
 
 }
 
