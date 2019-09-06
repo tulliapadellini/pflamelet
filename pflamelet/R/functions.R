@@ -119,16 +119,23 @@ flamelet.band = function(X, B, alpha, base.type = "landscape", base.param = 1, d
 
 
   if(is.list(X)){
+
+    Xbase = build.flamelet(X, base.type = base.type, base.param = base.param, dimension=,
+                        tseq=tseq, diag.fun = diag.fun, h.grid = h.grid, lim = lim, by= by,
+                        scale = FALSE, precomputed.diagram = FALSE, sublevel = sublevel, info.message = FALSE)
   f = function(){
     subset.idx = sample(1:nrow(X[[1]]), size = nrow(X[[1]]), replace = T)
     Xs = lapply(X, function(x) x[subset.idx, ])
     Xf = build.flamelet(Xs, base.type = base.type, base.param = base.param, dimension=,
                                 tseq=tseq, diag.fun = diag.fun, h.grid = h.grid, lim = lim, by= by,
                                 scale = FALSE, precomputed.diagram = FALSE, sublevel = sublevel, info.message = FALSE)
-    return(max(Xf))
+    return(max(abs(Xf-Xbase)))
 
   }
   } else{
+    Xbase = build.flamelet(X, base.type = base.type, base.param = base.param, dimension=,
+                        tseq=tseq, diag.fun = diag.fun, h.grid = h.grid, lim = lim, by= by,
+                        scale = FALSE, precomputed.diagram = FALSE, sublevel = sublevel, info.message = FALSE)
 
     f = function(){
       subset.idx = sample(1:nrow(X), size = nrow(X), replace = T)
@@ -136,7 +143,7 @@ flamelet.band = function(X, B, alpha, base.type = "landscape", base.param = 1, d
       Xf = build.flamelet(Xs, base.type = base.type, base.param = base.param, dimension=,
                           tseq=tseq, diag.fun = diag.fun, h.grid = h.grid, lim = lim, by= by,
                           scale = FALSE, precomputed.diagram = FALSE, sublevel = sublevel, info.message = FALSE)
-      return(max(Xf))
+      return(max(abs(Xf-Xbase)))
 
     }
 
