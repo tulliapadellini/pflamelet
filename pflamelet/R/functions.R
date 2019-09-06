@@ -30,6 +30,8 @@
 #'@param by a scalar (or a vector if different values are selected for each dimension)
 #'             specifying spaces between elements on the grid
 #'@param scale a logical indicating whether or not the Persistence Diagrams have to be scaled to be in the same range (needed only for visualization purposes)
+#'@param band a logical indicating whether or not the
+#'
 #'@examples
 #'
 #'## library(TDA)
@@ -41,19 +43,30 @@
 # ##                              tseq = seq(0, .75, length.out = 500))
 #'@export
 build.flamelet = function(X, base.type = "landscape", base.param = 1, dimension=1,
-                          tseq, diag.fun = distFct, h.grid =NULL, lim = NULL, by=NULL,
-                          scale = TRUE, precomputed.diagram = FALSE, sublevel = TRUE, info.message = FALSE){
+                           tseq, diag.fun = distFct, h.grid =NULL, lim = NULL, by=NULL,
+                           scale = TRUE, precomputed.diagram = FALSE, sublevel = TRUE, info.message = FALSE, band = FALSE, B = 10, alpha = 0.95){
 
   if(!is.list(X)){
     f = function(h) {
       diagr = gridDiag(X, kde, lim = lim, by = by, sublevel = FALSE,
                        location = FALSE, printProgress = FALSE, h = h, maxdimension = dimension)$diagram
-      if(scale) diagr[,2:3] = diagr[,2:3]/diagr[1,3]
+
+      if(band) {
+        cc <- bootstrapDiagram(X, kde, lim = lim, by = by, sublevel = FALSE, B = B,
+                               alpha = 1-alpha/length(h.grid), dimension = dimension, printProgress = FALSE, h = h)
+
+
+        idx = apply(diagr[,2:3], 1, diff)>2*cc
+        diagr = diagr[idx,]
+
+      }
+
+      if(scale && nrow(diagr)!=0) diagr[,2:3] = diagr[,2:3]/diagr[1,3]
       return(diagr)
     }
 
     if(info.message) cat("Computing the Persistence Diagrams - hold on, this is the longest step...")
-    diagList = lapply(h.grid, f)
+    diagList = pbapply::pblapply(h.grid, f)
     if(info.message) cat(" and now the Persistence Landscapes")
 
   } else {
@@ -67,7 +80,7 @@ build.flamelet = function(X, base.type = "landscape", base.param = 1, dimension=
       }
 
       if(info.message) cat("Computing the Persistence Diagrams - hold on, this is the longest step...")
-      diagList = lapply(X, f)
+      diagList = pbapply::pblapply(X, f)
       if(info.message) cat(" and now the Persistence Landscapes")
 
     }
@@ -78,7 +91,6 @@ build.flamelet = function(X, base.type = "landscape", base.param = 1, dimension=
   return(flamelet)
 
 }
-
 
 
 #' Bootstrap Band for Persistence Flamelet
