@@ -1,12 +1,3 @@
-# Hello, world!
-#
-# This is an example function named 'hello'
-# which prints 'Hello, world!'.
-#
-# You can learn more about package authoring with RStudio at:
-#
-#   http://r-pkgs.had.co.nz/
-#
 # Some useful keyboard shortcuts for package authoring:
 #
 #   Install Package:           'Ctrl + Shift + B'
@@ -51,17 +42,21 @@ build.flamelet = function(X, base.type = "landscape", base.param = 1, dimension=
       diagr = gridDiag(X, kde, lim = lim, by = by, sublevel = FALSE,
                        location = FALSE, printProgress = FALSE, h = h, maxdimension = dimension)$diagram
 
-      if(band) {
-        cc <- bootstrapDiagram(X, kde, lim = lim, by = by, sublevel = FALSE, B = B,
-                               alpha = 1-alpha/length(h.grid), dimension = dimension, printProgress = FALSE, h = h)
+      if(nrow(diagr)>0){
+        if(band) {
+          cc <- bootstrapDiagram(X, kde, lim = lim, by = by, sublevel = FALSE, B = B,
+                                 alpha = 1-alpha/length(h.grid), dimension = dimension, printProgress = FALSE, h = h)
 
 
-        idx = apply(diagr[,2:3], 1, diff)>2*cc
-        diagr = diagr[idx,]
+          idx = apply(as.matrix(diagr[,2:3]), 1, diff)>2*cc
+          diagr = diagr[idx,]
+          diagr = matrix(diagr, ncol = 3)
 
+        }
       }
 
-      if(scale && nrow(diagr)!=0) diagr[,2:3] = diagr[,2:3]/diagr[1,3]
+      if(scale && nrow(diagr)>0) diagr[,2:3] = diagr[,2:3]/diagr[1,3]
+
       return(diagr)
     }
 
@@ -169,6 +164,9 @@ flamelet.band = function(X, B, alpha, base.type = "landscape", base.param = 1, d
 
 
 }
+
+
+
 
 
 # if (plot) {
