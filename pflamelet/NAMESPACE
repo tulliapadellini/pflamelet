@@ -2,7 +2,11 @@
 
 export(build.flamelet)
 export(flamelet.band)
+importFrom(TDA,bootstrapDiagram)
+importFrom(TDA,distFct)
 importFrom(TDA,gridDiag)
 importFrom(TDA,kde)
 importFrom(TDA,landscape)
 importFrom(TDA,silhouette)
+importFrom(pbapply,pblapply)
+importFrom(stats,quantile)

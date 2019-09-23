@@ -3,5 +3,7 @@
 #'
 #' @docType package
 #' @name pflamelet
-#' @importFrom TDA gridDiag kde landscape silhouette
+#' @importFrom stats quantile
+#' @importFrom TDA gridDiag kde landscape silhouette distFct bootstrapDiagram
+#' @importFrom pbapply pblapply
 NULL

@@ -5,13 +5,17 @@
 \title{Bootstrap Band for Persistence Flamelet}
 \usage{
 flamelet.band(X, B, alpha, base.type = "landscape", base.param = 1,
-  dimension = 1, tseq, diag.fun = distFct, h.grid = NULL,
-  lim = NULL, by = NULL, sublevel = TRUE)
+  dimension = 1, tseq, diag.fun = distFct, sublevel = TRUE,
+  h.grid = NULL, lim = NULL, by = NULL)
 }
 \arguments{
 \item{X}{a list of persistence diagrams representing the scale-space family at different resolution.
 If \code{X} is a n-by-d matrix or a data.frame containing a d-dimensional pointcloud,
-this function computes the Flamelet on the corresponding KDE with the bandwidth as scale parameter.}
+this function computes the Flamelet on the corresponding \code{diag.fun}.}
+
+\item{B}{number of bootstrap repetitions needed to compute the confidence band over Persistence Diagrams}
+
+\item{alpha}{the confidence level of the bootstrap confidence bands}
 
 \item{base.type}{a string specifying whether the Flamelet is built from Persistence Landscapes ("landscape") or Persistence Silhouettes ("silhouettes")}
 
@@ -21,25 +25,26 @@ this function computes the Flamelet on the corresponding KDE with the bandwidth 
 
 \item{tseq}{a vector of values at which the Flamelet function is evaluated for a fixed scale level}
 
+\item{diag.fun}{the function whose sub/super-level set define the persistent homology groups. Corresponds to the argument \code{FUN} of the \code{gridDiag} function in the TDA package.}
+
+\item{sublevel}{a logical indicating whether the Persistent Homology should be computed on sub or superlevel set of the function given as \code{diag.fun}}
+
 \item{h.grid}{vector of bandwidths for the KDE, representing the scale parameter of the Flamelet}
 
-\item{lim}{2-by-d matrix, where the i-th column contains the range of the grid over which KDE is computed for the i-th variable.}
+\item{lim}{2-by-d matrix, where the i-th column contains the range of the grid over which the function specified in \code{diag.fun} is computed for the i-th variable.}
 
 \item{by}{a scalar (or a vector if different values are selected for each dimension)
-specifying spaces between elements on the grid}
-
-\item{scale}{a logical indicating whether or not the Persistence Diagrams have to be scaled to be in the same range (needed only for visualization purposes)}
-}
-\description{
-Computes a bootstrap band for the Persistence Flamelet from a list of Persistence Diagrams. If X is a matrix or a dataframe the function computes the flamelets of the
-kernel density estimator computed on X.
-}
-\examples{
+            specifying spaces between elements on the grid whose outernmost element are defined by \code{lim}.
+#'@examples
 
 ## library(TDA)
 ## xx = rbind(circleUnif(50, 1), circleUnif(50, 1.5) + 3)
 ## Xlim = c(-1, 5);  Ylim = c(-1, 5);  by = 0.05
 ## lim = cbind(Xlim, Ylim)
 ## foo.flamelet = build.flamelet(X = xx, h.grid = seq(0.01, 1, length.out = 40),
-## base.type = "landscape", dimension = 1,base.param = 1, lim = lim, by = by,
+## base.type = "landscape", dimension = 1,base.param = 1, lim = lim, by = by,}
+}
+\description{
+Computes a bootstrap band for the Persistence Flamelet from a list of Persistence Diagrams. If X is a matrix or a dataframe the function computes the Flamelets of the sub/superlevel set of
+an arbitrary function computed on X.
 }
