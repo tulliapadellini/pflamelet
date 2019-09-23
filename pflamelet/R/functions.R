@@ -180,7 +180,8 @@ flamelet.band = function(X, B, alpha, base.type = "landscape", base.param = 1, d
 #'            this function computes the Flamelet on the \code{diag.fun}.
 #'@param tseq a vector of values at which the Flamelet function is evaluated for a fixed scale level
 #'@param scale.param a vector corresponding to the values of the scale parameter at which the Flamelet \code{X} has been evaluated
-#'
+#'@param flat a logical denoting whether the plot should be a 2-d projection of the Flamelet (\code{TRUE}) or a 3-d object (\code{FALSE})
+#'@param scale.name name of the scale parameter
 #'
 #'@examples
 #'
