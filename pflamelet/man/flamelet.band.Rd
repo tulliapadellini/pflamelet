@@ -37,10 +37,10 @@ this function computes the Flamelet on the corresponding \code{diag.fun}.}
 specifying spaces between elements on the grid whose outernmost element are defined by \code{lim}.}
 }
 \value{
-The quantile of level 1-alpha necessary to build the confidence band. More details can be found in Padellini (2017).
+The quantile of level alpha necessary to build the confidence band. More details can be found in Padellini (2017).
 }
 \description{
-Computes a bootstrap band for the Persistence Flamelet. If the input is a list of data points observed at different scales, at each resolution, Persistence Diagrams are built
+Computes a bootstrap band around the 0 of the Persistence Flamelet. If the input is a list of data points observed at different scales, at each resolution, Persistence Diagrams are built
 for the sub/superlevel set of
 an arbitrary function computed on X, and then used to compute the Flamelet.
 }
@@ -49,9 +49,10 @@ an arbitrary function computed on X, and then used to compute the Flamelet.
 ## xx = rbind(circleUnif(50, 1), circleUnif(50, 1.5) + 3)
 ## Xlim = c(-1, 5);  Ylim = c(-1, 5);  by = 0.05
 ## lim = cbind(Xlim, Ylim)
-## foo.band = flamelet(X = xx, B = 10, alpha = 0.05,
+## foo.band = flamelet.band(X = xx, B = 10, alpha = 0.95,
 ##                     tseq = seq(0, .75, length.out = 500), diag.fun = kde,
 ##                     h.grid = seq(0.01, 1, length.out = 40), lim = lim, by = by)
+##
 }
 \references{
 T. Padellini and P. Brutti (2017) Persistence Flamelets: multiscale Persistent Homology for kernel density exploration \url{https://arxiv.org/abs/1709.07097}

@@ -100,7 +100,7 @@ build.flamelet = function(X, base.type = "landscape", base.param = 1, dimension=
 
 #' Bootstrap Band for Persistence Flamelet
 #'
-#' Computes a bootstrap band for the Persistence Flamelet. If the input is a list of data points observed at different scales, at each resolution, Persistence Diagrams are built
+#' Computes a bootstrap band around the 0 of the Persistence Flamelet. If the input is a list of data points observed at different scales, at each resolution, Persistence Diagrams are built
 #' for the sub/superlevel set of
 #' an arbitrary function computed on X, and then used to compute the Flamelet.
 #'
@@ -119,16 +119,17 @@ build.flamelet = function(X, base.type = "landscape", base.param = 1, dimension=
 #'@param lim 2-by-d matrix, where the i-th column contains the range of the grid over which the function specified in \code{diag.fun} is computed for the i-th variable.
 #'@param by a scalar (or a vector if different values are selected for each dimension).
 #'             specifying spaces between elements on the grid whose outernmost element are defined by \code{lim}.
-#'@return The quantile of level 1-alpha necessary to build the confidence band. More details can be found in Padellini (2017).
+#'@return The quantile of level alpha necessary to build the confidence band. More details can be found in Padellini (2017).
 #'@references T. Padellini and P. Brutti (2017) Persistence Flamelets: multiscale Persistent Homology for kernel density exploration \url{https://arxiv.org/abs/1709.07097}
 #'@examples
 #'## library(TDA)
 #'## xx = rbind(circleUnif(50, 1), circleUnif(50, 1.5) + 3)
 #'## Xlim = c(-1, 5);  Ylim = c(-1, 5);  by = 0.05
 #'## lim = cbind(Xlim, Ylim)
-#'## foo.band = flamelet(X = xx, B = 10, alpha = 0.05,
+#'## foo.band = flamelet.band(X = xx, B = 10, alpha = 0.95,
 #'##                     tseq = seq(0, .75, length.out = 500), diag.fun = kde,
 #'##                     h.grid = seq(0.01, 1, length.out = 40), lim = lim, by = by)
+#'##
 # ##
 #'@export
 flamelet.band = function(X, B, alpha, base.type = "landscape", base.param = 1, dimension=1,
@@ -184,6 +185,7 @@ flamelet.band = function(X, B, alpha, base.type = "landscape", base.param = 1, d
 #'@param scale.param a vector of lenght m corresponding to the values of the scale parameter at which the Flamelet has been evaluated.
 #'@param flat a logical denoting whether the plot should be a 2-d projection of the Flamelet (\code{TRUE}) or a 3-d object (\code{FALSE}).
 #'@param scale.name name of the scale parameter.
+#'@param band scalar representing the confidence band for Persistence Flamelet. Only available when \code{flat = FALSE}.
 #'@references T. Padellini and P. Brutti (2017) Persistence Flamelets: multiscale Persistent Homology for kernel density exploration \url{https://arxiv.org/abs/1709.07097}
 #'@examples
 #'
@@ -196,9 +198,17 @@ flamelet.band = function(X, B, alpha, base.type = "landscape", base.param = 1, d
 #'##                              tseq = seq(0, .75, length.out = 500))
 #'## flamelet.plot(foo.flamelet, scale.param = seq(0.01, 1, length.out = 40),
 #'##               tseq = seq(0, .75, length.out = 500) )
+#'##
+#'##
+#'## foo.band = flamelet.band(X = xx, B = 10, alpha = 0.05,
+#'##                     tseq = seq(0, .75, length.out = 500), diag.fun = kde,
+#'##                     h.grid = seq(0.01, 1, length.out = 40), lim = lim, by = by)
+#'##
+#'## flamelet.plot(foo.flamelet, scale.param = seq(0.01, 1, length.out = 40),
+#'##               tseq = seq(0, .75, length.out = 500), band = foo.band)
 #'
 #'@export
-flamelet.plot = function(flamelet, scale.param, tseq, flat=FALSE,  scale.name ="Bandwidth"){
+flamelet.plot = function(flamelet, scale.param, tseq, flat=FALSE,  scale.name ="Bandwidth", band = NULL){
 
 
   if(flat){
@@ -214,7 +224,15 @@ flamelet.plot = function(flamelet, scale.param, tseq, flat=FALSE,  scale.name ="
           yaxis = list(title = "(Birth + Death)/2"),
           zaxis = list(title = "Persistence"))
       )
-  out.plot
+    if(!is.null(band)){
+      upper.bound = flamelet + band
+      lower.bound = flamelet - band
+      lower.bound[lower.bound<0] <- 0
+      out.plot = out.plot %>% add_surface(z = ~upper.bound, opacity = 0.5, showscale = FALSE) %>%
+        add_surface(z = ~lower.bound, opacity = 0.5, showscale = FALSE)
+    }
+
+    out.plot
   }
 
 }
@@ -240,9 +258,42 @@ flamelet.plot = function(flamelet, scale.param, tseq, flat=FALSE,  scale.name ="
 #'## mpband(flamelet = foo.flamelet, scale.param = seq(0.01, 1, length.out = 40))
 #'##
 #'@export
-mpband = function(flamelet, scale.param){
+mpbandwidth = function(flamelet, scale.param){
   cc = apply(flamelet, 2, max)
   return(scale.param(which.max(cc)))
 
 }
+
+
+
+#' Clean Persistence Flamelet
+#'
+#' Remove all the values of the Persistence Flamelet which are not significantly different than 0
+#'
+#'@param flamelet a kxm matrix corresponding to the Persistence Flamelet.
+#'@param band a scalar representing the confidence band.
+#'@return the value of the bandwidth corresponding to the most persistent feature of the Flamelet.
+#'@references T. Padellini and P. Brutti (2017) Persistence Flamelets: multiscale Persistent Homology for kernel density exploration \url{https://arxiv.org/abs/1709.07097}
+#'@examples
+#'
+#'## library(TDA)
+#'## xx = rbind(circleUnif(50, 1), circleUnif(50, 1.5) + 3)
+#'## Xlim = c(-1, 5);  Ylim = c(-1, 5);  by = 0.05
+#'## lim = cbind(Xlim, Ylim)
+#'## foo.flamelet = build.flamelet(X = xx, h.grid = seq(0.01, 1, length.out = 40),
+#'## base.type = "landscape", dimension = 1,base.param = 1, lim = lim, by = by,
+#'##                              tseq = seq(0, .75, length.out = 500))
+#'## foo.band = flamelet.band(X = xx, B = 10, alpha = 0.95,
+#'##                     tseq = seq(0, .75, length.out = 500), diag.fun = kde,
+#'##                     h.grid = seq(0.01, 1, length.out = 40), lim = lim, by = by)
+#'## new.flamelet = flamelet.clean(foo.flamelet, foo.band)
+#'##
+#'
+#'@export
+flamelet.clean = function(flamelet, band){
+  idx = flamelet < band
+  flamelet[idx] <- 0
+  return(flamelet)
+}
+
 

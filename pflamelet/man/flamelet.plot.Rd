@@ -5,7 +5,7 @@
 \title{Plot Persistence Flamelet}
 \usage{
 flamelet.plot(flamelet, scale.param, tseq, flat = FALSE,
-  scale.name = "Bandwidth")
+  scale.name = "Bandwidth", band = NULL)
 }
 \arguments{
 \item{flamelet}{a kxm matrix corresponding to the Persistence Flamelet.}
@@ -17,6 +17,8 @@ flamelet.plot(flamelet, scale.param, tseq, flat = FALSE,
 \item{flat}{a logical denoting whether the plot should be a 2-d projection of the Flamelet (\code{TRUE}) or a 3-d object (\code{FALSE}).}
 
 \item{scale.name}{name of the scale parameter.}
+
+\item{band}{scalar representing the confidence band for Persistence Flamelet. Only available when \code{flat = FALSE}.}
 }
 \description{
 Plot the Persistence Flamelet in its original 3-dimensional form, or in a 2-dimensional projection.
@@ -32,6 +34,14 @@ Plot the Persistence Flamelet in its original 3-dimensional form, or in a 2-dime
 ##                              tseq = seq(0, .75, length.out = 500))
 ## flamelet.plot(foo.flamelet, scale.param = seq(0.01, 1, length.out = 40),
 ##               tseq = seq(0, .75, length.out = 500) )
+##
+##
+## foo.band = flamelet.band(X = xx, B = 10, alpha = 0.05,
+##                     tseq = seq(0, .75, length.out = 500), diag.fun = kde,
+##                     h.grid = seq(0.01, 1, length.out = 40), lim = lim, by = by)
+##
+## flamelet.plot(foo.flamelet, scale.param = seq(0.01, 1, length.out = 40),
+##               tseq = seq(0, .75, length.out = 500), band = foo.band)
 
 }
 \references{
