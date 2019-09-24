@@ -4,10 +4,11 @@
 #   Check Package:             'Ctrl + Shift + E'
 #   Test Package:              'Ctrl + Shift + T'
 
-#' Persistence Flamelet Function
+#' Persistence Flamelet
 #'
-#' Computes the Persistence Flamelets from a list of Persistence Diagrams. If X is a matrix or a dataframe the function computes the Flamelets of the sub/superlevel set of
-#' an arbitrary function computed on X.
+#' Computes the Persistence Flamelet from a list of Persistence Diagrams. If the input is a list of data points observed at different scales, at each resolution, Persistence Diagrams are built
+#' for the sub/superlevel set of
+#' an arbitrary function computed on X, and then used to compute the Flamelet.
 #'
 #'@param X    a list of m persistence diagrams representing the scale-space family at different resolutions,
 #'            or a list of m matrix/data.frame containing the pointcloud at different resolutions.
@@ -47,7 +48,7 @@ build.flamelet = function(X, base.type = "landscape", base.param = 1, dimension=
                            scale = TRUE, precomputed.diagram = FALSE, info.message = FALSE, band = FALSE, B = 10, alpha = 0.95){
 
   if(!is.list(X)){
-    f = function(h) {
+    f1 = function(h) {
       diagr = gridDiag(X, kde, lim = lim, by = by, sublevel = FALSE,
                        location = FALSE, printProgress = FALSE, h = h, maxdimension = dimension)$diagram
 
@@ -70,21 +71,21 @@ build.flamelet = function(X, base.type = "landscape", base.param = 1, dimension=
     }
 
     if(info.message) cat("Computing the Persistence Diagrams - hold on, this is the longest step...")
-    diagList = pbapply::pblapply(h.grid, f)
+    diagList = pbapply::pblapply(h.grid, f1)
     if(info.message) cat(" and now the Persistence Landscapes")
 
   } else {
     if(precomputed.diagram) diagListh = X
     else{
 
-      f = function(x) {
+      f2 = function(x) {
         diagr = gridDiag(x, diag.fun, lim = lim, by = by, sublevel = sublevel,
                          location = FALSE, printProgress = FALSE, maxdimension = dimension)$diagram
         return(diagr)
       }
 
       if(info.message) cat("Computing the Persistence Diagrams - hold on, this is the longest step...")
-      diagList = pbapply::pblapply(X, f)
+      diagList = pbapply::pblapply(X, f2)
       if(info.message) cat(" and now the Persistence Landscapes")
 
     }
@@ -99,35 +100,34 @@ build.flamelet = function(X, base.type = "landscape", base.param = 1, dimension=
 
 #' Bootstrap Band for Persistence Flamelet
 #'
-#' Computes a bootstrap band for the Persistence Flamelet from a list of Persistence Diagrams or If X is a matrix or a dataframe the function computes the Flamelets of the sub/superlevel set of
-#' an arbitrary function computed on X.
+#' Computes a bootstrap band for the Persistence Flamelet. If the input is a list of data points observed at different scales, at each resolution, Persistence Diagrams are built
+#' for the sub/superlevel set of
+#' an arbitrary function computed on X, and then used to compute the Flamelet.
 #'
-#'@param X   a list of persistence diagrams representing the scale-space family at different resolutions,
-#' or a list of m matrix/data.frame containing the pointcloud at different resolutions.
+#'@param X    a list of m matrix/data.frame containing the pointcloud at different resolutions.
 #'            If \code{X} is a n-by-d matrix or a data.frame containing a d-dimensional pointcloud,
 #'            this function computes the Flamelet on the corresponding \code{diag.fun}.
-#'@param B number of bootstrap repetitions needed to compute the confidence band over Persistence Diagrams
-#'@param alpha the confidence level of the bootstrap confidence bands
-#'@param base.type a string specifying whether the Flamelet is built from Persistence Landscapes ("landscape") or Persistence Silhouettes ("silhouettes")
-#'@param base.param the order k of the Flamelet (if base.type=="landscape") or the power p of the Flamelet (if base.type=="silhouette")
+#'@param B number of bootstrap repetitions needed to compute the confidence band over Persistence Diagrams.
+#'@param alpha the confidence level of the bootstrap confidence bands.
+#'@param base.type a string specifying whether the Flamelet is built from Persistence Landscapes ("landscape") or Persistence Silhouettes ("silhouettes").
+#'@param base.param the order k of the Flamelet (if base.type=="landscape") or the power p of the Flamelet (if base.type=="silhouette").
 #'@param dimension the topological dimension of the flamelet (0 for connected components, 1 for loops, ...)
-#'@param tseq a vector of values at which the Flamelet function is evaluated for a fixed scale level
+#'@param tseq a vector of values at which the Flamelet function is evaluated for a fixed scale level.
 #'@param diag.fun the function whose sub/super-level set define the persistent homology groups. Corresponds to the argument \code{FUN} of the \code{gridDiag} function in the TDA package.
-#'@param sublevel a logical indicating whether the Persistent Homology should be computed on sub or superlevel set of the function given as \code{diag.fun}
-#'@param h.grid vector of bandwidths for the KDE, representing the scale parameter of the Flamelet
+#'@param sublevel a logical indicating whether the Persistent Homology should be computed on sub or superlevel set of the function given as \code{diag.fun}.
+#'@param h.grid vector of bandwidths for the KDE, representing the scale parameter of the Flamelet.
 #'@param lim 2-by-d matrix, where the i-th column contains the range of the grid over which the function specified in \code{diag.fun} is computed for the i-th variable.
-#'@param by a scalar (or a vector if different values are selected for each dimension)
+#'@param by a scalar (or a vector if different values are selected for each dimension).
 #'             specifying spaces between elements on the grid whose outernmost element are defined by \code{lim}.
-#'@return The
+#'@return The quantile of level 1-alpha necessary to build the confidence band. More details can be found in Padellini (2017).
 #'@references T. Padellini and P. Brutti (2017) Persistence Flamelets: multiscale Persistent Homology for kernel density exploration \url{https://arxiv.org/abs/1709.07097}
-#'
-#'#'@examples
-#'
+#'@examples
 #'## library(TDA)
 #'## xx = rbind(circleUnif(50, 1), circleUnif(50, 1.5) + 3)
 #'## Xlim = c(-1, 5);  Ylim = c(-1, 5);  by = 0.05
 #'## lim = cbind(Xlim, Ylim)
-#'## foo.band = flamelet(X = xx, B = 10, alpha = 0.05, tseq = seq(0, .75, length.out = 500), diag.fun = kde,
+#'## foo.band = flamelet(X = xx, B = 10, alpha = 0.05,
+#'##                     tseq = seq(0, .75, length.out = 500), diag.fun = kde,
 #'##                     h.grid = seq(0.01, 1, length.out = 40), lim = lim, by = by)
 # ##
 #'@export
@@ -179,12 +179,12 @@ flamelet.band = function(X, B, alpha, base.type = "landscape", base.param = 1, d
 #'
 #' Plot the Persistence Flamelet in its original 3-dimensional form, or in a 2-dimensional projection.
 #'
-#'@param flamelet a kxm matrix corresponding to the Persistence Flamelet
-#'@param tseq a vector of length k containing of values at which the Flamelet function is evaluated for a fixed scale level
-#'@param scale.param a vector of lenght m corresponding to the values of the scale parameter at which the Flamelet \code{X} has been evaluated
-#'@param flat a logical denoting whether the plot should be a 2-d projection of the Flamelet (\code{TRUE}) or a 3-d object (\code{FALSE})
-#'@param scale.name name of the scale parameter
-#'
+#'@param flamelet a kxm matrix corresponding to the Persistence Flamelet.
+#'@param tseq a vector of length k containing of values at which the Flamelet function is evaluated for a fixed scale level.
+#'@param scale.param a vector of lenght m corresponding to the values of the scale parameter at which the Flamelet has been evaluated.
+#'@param flat a logical denoting whether the plot should be a 2-d projection of the Flamelet (\code{TRUE}) or a 3-d object (\code{FALSE}).
+#'@param scale.name name of the scale parameter.
+#'@references T. Padellini and P. Brutti (2017) Persistence Flamelets: multiscale Persistent Homology for kernel density exploration \url{https://arxiv.org/abs/1709.07097}
 #'@examples
 #'
 #'## library(TDA)
@@ -194,7 +194,8 @@ flamelet.band = function(X, B, alpha, base.type = "landscape", base.param = 1, d
 #'## foo.flamelet = build.flamelet(X = xx, h.grid = seq(0.01, 1, length.out = 40),
 #'## base.type = "landscape", dimension = 1,base.param = 1, lim = lim, by = by,
 #'##                              tseq = seq(0, .75, length.out = 500))
-#'## flamelet.plot(foo.flamelet, scale.param = seq(0.01, 1, length.out = 40), tseq = seq(0, .75, length.out = 500) )
+#'## flamelet.plot(foo.flamelet, scale.param = seq(0.01, 1, length.out = 40),
+#'##               tseq = seq(0, .75, length.out = 500) )
 #'
 #'@export
 flamelet.plot = function(flamelet, scale.param, tseq, flat=FALSE,  scale.name ="Bandwidth"){
@@ -223,8 +224,10 @@ flamelet.plot = function(flamelet, scale.param, tseq, flat=FALSE,  scale.name ="
 #'
 #' Select the bandwidth that maximises the persistence of the scale-family, highlighting the most prominent topological feature of the KDE.
 #'
-#'@param flamelet a kxm matrix corresponding to the Persistence Flamelet
-#'@param scale.param a vector of lenght m corresponding to the values of the scale parameter at which the Flamelet \code{X} has been evaluated
+#'@param flamelet a kxm matrix corresponding to the Persistence Flamelet.
+#'@param scale.param a vector of lenght m corresponding to the values of the scale parameter at which the Flamelet \code{X} has been evaluated.
+#'@return the value of the bandwidth corresponding to the most persistent feature of the Flamelet.
+#'@references T. Padellini and P. Brutti (2017) Persistence Flamelets: multiscale Persistent Homology for kernel density exploration \url{https://arxiv.org/abs/1709.07097}
 #'@examples
 #'
 #'## library(TDA)

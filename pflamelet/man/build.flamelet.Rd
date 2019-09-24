@@ -2,7 +2,7 @@
 % Please edit documentation in R/functions.R
 \name{build.flamelet}
 \alias{build.flamelet}
-\title{Persistence Flamelet Function}
+\title{Persistence Flamelet}
 \usage{
 build.flamelet(X, base.type = "landscape", base.param = 1,
   dimension = 1, tseq, diag.fun = distFct, sublevel = TRUE,
@@ -11,44 +11,50 @@ build.flamelet(X, base.type = "landscape", base.param = 1,
   B = 10, alpha = 0.95)
 }
 \arguments{
-\item{X}{a list of persistence diagrams representing the scale-space family at different resolution.
+\item{X}{a list of m persistence diagrams representing the scale-space family at different resolutions,
+or a list of m matrix/data.frame containing the pointcloud at different resolutions.
 If \code{X} is a n-by-d matrix or a data.frame containing a d-dimensional pointcloud,
 this function computes the Flamelet on the \code{diag.fun}.}
 
-\item{base.type}{a string specifying whether the Flamelet is built from Persistence Landscapes ("landscape") or Persistence Silhouettes ("silhouettes")}
+\item{base.type}{a string specifying whether the Flamelet is built from Persistence Landscapes ("landscape") or Persistence Silhouettes ("silhouettes").}
 
-\item{base.param}{the order k of the Flamelet (if base.type=="landscape") or the power p of the Flamelet (if base.type=="silhouette")}
+\item{base.param}{the order k of the Flamelet (if \code{base.type=="landscape"}) or the power p of the Flamelet (if \code{base.type=="silhouette"}).}
 
-\item{dimension}{the topological dimension of the flamelet (0 for connected components, 1 for loops, ...)}
+\item{dimension}{the topological dimension of the flamelet (0 for connected components, 1 for loops, ...).}
 
-\item{tseq}{a vector of values at which the Flamelet function is evaluated for a fixed scale level}
+\item{tseq}{a vector of dimension k containing the values at which the Flamelet function is evaluated for a fixed scale level.}
 
 \item{diag.fun}{the function whose sub/super-level set define the persistent homology groups. Corresponds to the argument \code{FUN} of the \code{gridDiag} function in the TDA package.}
 
-\item{sublevel}{a logical indicating whether the Persistent Homology should be computed on sub or superlevel set of the function given as \code{diag.fun}}
+\item{sublevel}{a logical indicating whether the Persistent Homology should be computed on sub or superlevel set of the function given as \code{diag.fun}.}
 
-\item{h.grid}{vector of bandwidths for the KDE, representing the scale parameter of the Flamelet}
+\item{h.grid}{vector of dimension m containing bandwidths for the KDE, representing the scale parameter of the Flamelet.}
 
 \item{lim}{2-by-d matrix, where the i-th column contains the range of the grid over which the function specified in \code{diag.fun} is computed for the i-th variable.}
 
-\item{by}{a scalar (or a vector if different values are selected for each dimension)
+\item{by}{a scalar (or a vector if different values are selected for each dimension).
 specifying spaces between elements on the grid whose outernmost element are defined by \code{lim}.}
 
-\item{scale}{a logical indicating whether or not the Persistence Diagrams have to be scaled to be in the same range (needed only for visualization purposes)}
+\item{scale}{a logical indicating whether or not the Persistence Diagrams have to be scaled to be in the same range (needed only for visualization purposes).}
 
-\item{precomputed.diagram}{a logical indicating whether the Persistence Diagrams have to be computed or are given as input in the form of a list of diagrams}
+\item{precomputed.diagram}{a logical indicating whether the Persistence Diagrams have to be computed or are given as input in the form of a list of diagrams.}
 
-\item{info.message}{a logical denoting if progress messages should be printed}
+\item{info.message}{a logical denoting if progress messages should be printed.}
 
-\item{band}{a logical indicating whether or not each Persistence Diagram should be cleaned by means of Bootstrap Bands (only possible when the Persistence Diagrams are computed within the function and are not given as an input)}
+\item{band}{a logical indicating whether or not each Persistence Diagram should be cleaned by means of Bootstrap Bands
+(only possible when the Persistence Diagrams are computed within the function and are not given as an input).}
 
-\item{B}{number of bootstrap repetitions needed to compute the confidence band over Persistence Diagrams}
+\item{B}{number of bootstrap repetitions needed to compute the confidence band over Persistence Diagrams.}
 
-\item{alpha}{the confidence level of the bootstrap confidence bands}
+\item{alpha}{the confidence level of the bootstrap confidence bands.}
+}
+\value{
+a k-by-m matrix containing the Persistence Flamelet.
 }
 \description{
-Computes the Persistence Flamelets from a list of Persistence Diagrams. If X is a matrix or a dataframe the function computes the Flamelets of the sub/superlevel set of
-an arbitrary function computed on X.
+Computes the Persistence Flamelet from a list of Persistence Diagrams. If the input is a list of data points observed at different scales, at each resolution, Persistence Diagrams are built
+for the sub/superlevel set of
+an arbitrary function computed on X, and then used to compute the Flamelet.
 }
 \examples{
 
@@ -58,4 +64,7 @@ an arbitrary function computed on X.
 ## lim = cbind(Xlim, Ylim)
 ## foo.flamelet = build.flamelet(X = xx, h.grid = seq(0.01, 1, length.out = 40),
 ## base.type = "landscape", dimension = 1,base.param = 1, lim = lim, by = by,
+}
+\references{
+T. Padellini and P. Brutti (2017) Persistence Flamelets: multiscale Persistent Homology for kernel density exploration \url{https://arxiv.org/abs/1709.07097}
 }

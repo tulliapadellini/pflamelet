@@ -9,42 +9,50 @@ flamelet.band(X, B, alpha, base.type = "landscape", base.param = 1,
   h.grid = NULL, lim = NULL, by = NULL)
 }
 \arguments{
-\item{X}{a list of persistence diagrams representing the scale-space family at different resolution.
+\item{X}{a list of m matrix/data.frame containing the pointcloud at different resolutions.
 If \code{X} is a n-by-d matrix or a data.frame containing a d-dimensional pointcloud,
 this function computes the Flamelet on the corresponding \code{diag.fun}.}
 
-\item{B}{number of bootstrap repetitions needed to compute the confidence band over Persistence Diagrams}
+\item{B}{number of bootstrap repetitions needed to compute the confidence band over Persistence Diagrams.}
 
-\item{alpha}{the confidence level of the bootstrap confidence bands}
+\item{alpha}{the confidence level of the bootstrap confidence bands.}
 
-\item{base.type}{a string specifying whether the Flamelet is built from Persistence Landscapes ("landscape") or Persistence Silhouettes ("silhouettes")}
+\item{base.type}{a string specifying whether the Flamelet is built from Persistence Landscapes ("landscape") or Persistence Silhouettes ("silhouettes").}
 
-\item{base.param}{the order k of the Flamelet (if base.type=="landscape") or the power p of the Flamelet (if base.type=="silhouette")}
+\item{base.param}{the order k of the Flamelet (if base.type=="landscape") or the power p of the Flamelet (if base.type=="silhouette").}
 
 \item{dimension}{the topological dimension of the flamelet (0 for connected components, 1 for loops, ...)}
 
-\item{tseq}{a vector of values at which the Flamelet function is evaluated for a fixed scale level}
+\item{tseq}{a vector of values at which the Flamelet function is evaluated for a fixed scale level.}
 
 \item{diag.fun}{the function whose sub/super-level set define the persistent homology groups. Corresponds to the argument \code{FUN} of the \code{gridDiag} function in the TDA package.}
 
-\item{sublevel}{a logical indicating whether the Persistent Homology should be computed on sub or superlevel set of the function given as \code{diag.fun}}
+\item{sublevel}{a logical indicating whether the Persistent Homology should be computed on sub or superlevel set of the function given as \code{diag.fun}.}
 
-\item{h.grid}{vector of bandwidths for the KDE, representing the scale parameter of the Flamelet}
+\item{h.grid}{vector of bandwidths for the KDE, representing the scale parameter of the Flamelet.}
 
 \item{lim}{2-by-d matrix, where the i-th column contains the range of the grid over which the function specified in \code{diag.fun} is computed for the i-th variable.}
 
-\item{by}{a scalar (or a vector if different values are selected for each dimension)
-            specifying spaces between elements on the grid whose outernmost element are defined by \code{lim}.
-#'@examples
-
+\item{by}{a scalar (or a vector if different values are selected for each dimension).
+specifying spaces between elements on the grid whose outernmost element are defined by \code{lim}.}
+}
+\value{
+The quantile of level 1-alpha necessary to build the confidence band. More details can be found in Padellini (2017).
+}
+\description{
+Computes a bootstrap band for the Persistence Flamelet. If the input is a list of data points observed at different scales, at each resolution, Persistence Diagrams are built
+for the sub/superlevel set of
+an arbitrary function computed on X, and then used to compute the Flamelet.
+}
+\examples{
 ## library(TDA)
 ## xx = rbind(circleUnif(50, 1), circleUnif(50, 1.5) + 3)
 ## Xlim = c(-1, 5);  Ylim = c(-1, 5);  by = 0.05
 ## lim = cbind(Xlim, Ylim)
-## foo.flamelet = build.flamelet(X = xx, h.grid = seq(0.01, 1, length.out = 40),
-## base.type = "landscape", dimension = 1,base.param = 1, lim = lim, by = by,}
+## foo.band = flamelet(X = xx, B = 10, alpha = 0.05,
+##                     tseq = seq(0, .75, length.out = 500), diag.fun = kde,
+##                     h.grid = seq(0.01, 1, length.out = 40), lim = lim, by = by)
 }
-\description{
-Computes a bootstrap band for the Persistence Flamelet from a list of Persistence Diagrams. If X is a matrix or a dataframe the function computes the Flamelets of the sub/superlevel set of
-an arbitrary function computed on X.
+\references{
+T. Padellini and P. Brutti (2017) Persistence Flamelets: multiscale Persistent Homology for kernel density exploration \url{https://arxiv.org/abs/1709.07097}
 }

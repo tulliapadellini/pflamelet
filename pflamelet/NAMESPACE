@@ -3,6 +3,7 @@
 export(build.flamelet)
 export(flamelet.band)
 export(flamelet.plot)
+export(mpband)
 importFrom(TDA,bootstrapDiagram)
 importFrom(TDA,distFct)
 importFrom(TDA,gridDiag)

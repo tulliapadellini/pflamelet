@@ -4,19 +4,22 @@
 \alias{flamelet.plot}
 \title{Plot Persistence Flamelet}
 \usage{
-flamelet.plot(X, scale.param, tseq, flat, scale.name = "Bandwidth")
+flamelet.plot(flamelet, scale.param, tseq, flat = FALSE,
+  scale.name = "Bandwidth")
 }
 \arguments{
-\item{X}{a list of persistence diagrams representing the scale-space family at different resolution.
-If \code{X} is a n-by-d matrix or a data.frame containing a d-dimensional pointcloud,
-this function computes the Flamelet on the \code{diag.fun}.}
+\item{flamelet}{a kxm matrix corresponding to the Persistence Flamelet.}
 
-\item{scale.param}{a vector corresponding to the values of the scale parameter at which the Flamelet \code{X} has been evaluated}
+\item{scale.param}{a vector of lenght m corresponding to the values of the scale parameter at which the Flamelet has been evaluated.}
 
-\item{tseq}{a vector of values at which the Flamelet function is evaluated for a fixed scale level}
+\item{tseq}{a vector of length k containing of values at which the Flamelet function is evaluated for a fixed scale level.}
+
+\item{flat}{a logical denoting whether the plot should be a 2-d projection of the Flamelet (\code{TRUE}) or a 3-d object (\code{FALSE}).}
+
+\item{scale.name}{name of the scale parameter.}
 }
 \description{
-Plots
+Plot the Persistence Flamelet in its original 3-dimensional form, or in a 2-dimensional projection.
 }
 \examples{
 
@@ -26,4 +29,11 @@ Plots
 ## lim = cbind(Xlim, Ylim)
 ## foo.flamelet = build.flamelet(X = xx, h.grid = seq(0.01, 1, length.out = 40),
 ## base.type = "landscape", dimension = 1,base.param = 1, lim = lim, by = by,
+##                              tseq = seq(0, .75, length.out = 500))
+## flamelet.plot(foo.flamelet, scale.param = seq(0.01, 1, length.out = 40),
+##               tseq = seq(0, .75, length.out = 500) )
+
+}
+\references{
+T. Padellini and P. Brutti (2017) Persistence Flamelets: multiscale Persistent Homology for kernel density exploration \url{https://arxiv.org/abs/1709.07097}
 }
