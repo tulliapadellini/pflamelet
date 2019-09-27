@@ -7,5 +7,5 @@ It implements all the methods introduced in [Persistence Flamelets: multiscale P
 While it is not on [CRAN](https://cran.r-project.org) yet, you can install it as follows: 
 ``` r
 # install.packages("devtools")
-devtools::install_github("tulliapadellini/rainbaud")
+devtools::install_github("tulliapadellini/pflamelet")
 ```
