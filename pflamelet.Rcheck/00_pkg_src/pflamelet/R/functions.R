@@ -261,7 +261,7 @@ flamelet.plot = function(flamelet, scale.param, tseq, flat=FALSE,  scale.name ="
 #'@export
 mpbandwidth = function(flamelet, scale.param){
   cc = apply(flamelet, 2, max)
-  return(scale.param[which.max(cc)])
+  return(scale.param(which.max(cc)))
 
 }
 
@@ -381,7 +381,7 @@ permutation.test <- function(sample1, sample2,  n.rep = NULL, seed = NULL){
   n2 = dim(sample2)[3]
   nn = dim(sample1)[3] + dim(sample2)[3]
 
-  #stopifnot("Samples of Flamelets must have the same dimensions!" = all(dim(sample1)[1:2] == dim(sample2)[1:2] ))
+  stopifnot("Samples of Flamelets must have the same dimensions!" = !all(dim(sample1)[1:2] == dim(sample2)[1:2] ))
   sample_tot = abind::abind(sample1, sample2)
 
 

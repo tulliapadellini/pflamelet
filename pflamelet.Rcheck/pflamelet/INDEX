@@ -1,0 +1,7 @@
+build.flamelet          Persistence Flamelet
+flamelet.band           Bootstrap Band for Persistence Flamelet
+flamelet.clean          Clean Persistence Flamelet
+flamelet.plot           Plot Persistence Flamelet
+mpbandwidth             Maximum Persistence Bandwidth
+permutation.test        Two-sample permutation test
+pflamelet               pflamelet: Persistence Flamelets

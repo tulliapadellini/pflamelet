@@ -1,0 +1,198 @@
+
+R version 4.0.3 (2020-10-10) -- "Bunny-Wunnies Freak Out"
+Copyright (C) 2020 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin17.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> pkgname <- "pflamelet"
+> source(file.path(R.home("share"), "R", "examples-header.R"))
+> options(warn = 1)
+> base::assign(".ExTimings", "pflamelet-Ex.timings", pos = 'CheckExEnv')
+> base::cat("name\tuser\tsystem\telapsed\n", file=base::get(".ExTimings", pos = 'CheckExEnv'))
+> base::assign(".format_ptime",
++ function(x) {
++   if(!is.na(x[4L])) x[1L] <- x[1L] + x[4L]
++   if(!is.na(x[5L])) x[2L] <- x[2L] + x[5L]
++   options(OutDec = '.')
++   format(x[1L:3L], digits = 7L)
++ },
++ pos = 'CheckExEnv')
+> 
+> ### * </HEADER>
+> library('pflamelet')
+> 
+> base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
+> base::assign(".old_wd", base::getwd(), pos = 'CheckExEnv')
+> cleanEx()
+> nameEx("build.flamelet")
+> ### * build.flamelet
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: build.flamelet
+> ### Title: Persistence Flamelet
+> ### Aliases: build.flamelet
+> 
+> ### ** Examples
+> 
+> ## No test: 
+> library(TDA)
+> xx = rbind(circleUnif(50, 1), circleUnif(50, 1.5) + 3)
+> Xlim = c(-1, 5);  Ylim = c(-1, 5);  by = 0.05
+> lim = cbind(Xlim, Ylim)
+> foo.flamelet = build.flamelet(X = xx, h.grid = seq(0.01, 1, length.out = 40),
++ base.type = "landscape", dimension = 1,base.param = 1, lim = lim, by = by,
++                             tseq = seq(0, .75, length.out = 500))
+> ## End(No test)
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("build.flamelet", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+
+detaching ‘package:TDA’
+
+> nameEx("flamelet.band")
+> ### * flamelet.band
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: flamelet.band
+> ### Title: Bootstrap Band for Persistence Flamelet
+> ### Aliases: flamelet.band
+> 
+> ### ** Examples
+> 
+> ## No test: 
+> library(TDA)
+> xx = rbind(circleUnif(50, 1), circleUnif(50, 1.5) + 3)
+> Xlim = c(-1, 5);  Ylim = c(-1, 5);  by = 0.05
+> lim = cbind(Xlim, Ylim)
+> foo.band = flamelet.band(X = xx, B = 10, alpha = 0.95,
++                   tseq = seq(0, .75, length.out = 500), diag.fun = kde,
++                   h.grid = seq(0.01, 1, length.out = 40), lim = lim, by = by)
+> ## End(No test)
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("flamelet.band", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+
+detaching ‘package:TDA’
+
+> nameEx("flamelet.clean")
+> ### * flamelet.clean
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: flamelet.clean
+> ### Title: Clean Persistence Flamelet
+> ### Aliases: flamelet.clean
+> 
+> ### ** Examples
+> 
+> ## No test: 
+> library(TDA)
+> xx = rbind(circleUnif(50, 1), circleUnif(50, 1.5) + 3)
+> Xlim = c(-1, 5);  Ylim = c(-1, 5);  by = 0.05
+> lim = cbind(Xlim, Ylim)
+> foo.flamelet = build.flamelet(X = xx, h.grid = seq(0.01, 1, length.out = 40),
++ base.type = "landscape", dimension = 1,base.param = 1, lim = lim, by = by,
++                             tseq = seq(0, .75, length.out = 500))
+> foo.band = flamelet.band(X = xx, B = 10, alpha = 0.95,
++                    tseq = seq(0, .75, length.out = 500), diag.fun = kde,
++                    h.grid = seq(0.01, 1, length.out = 40), lim = lim, by = by)
+> new.flamelet = flamelet.clean(foo.flamelet, foo.band)
+> 
+> ## End(No test)
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("flamelet.clean", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+
+detaching ‘package:TDA’
+
+> nameEx("flamelet.plot")
+> ### * flamelet.plot
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: flamelet.plot
+> ### Title: Plot Persistence Flamelet
+> ### Aliases: flamelet.plot
+> 
+> ### ** Examples
+> 
+> ## No test: 
+> library(TDA)
+> xx = rbind(circleUnif(50, 1), circleUnif(50, 1.5) + 3)
+> Xlim = c(-1, 5);  Ylim = c(-1, 5);  by = 0.05
+> lim = cbind(Xlim, Ylim)
+> foo.flamelet = build.flamelet(X = xx, h.grid = seq(0.01, 1, length.out = 40),
++ base.type = "landscape", dimension = 1,base.param = 1, lim = lim, by = by,
++                             tseq = seq(0, .75, length.out = 500))
+> flamelet.plot(foo.flamelet, scale.param = seq(0.01, 1, length.out = 40),
++              tseq = seq(0, .75, length.out = 500) )
+> 
+> 
+> foo.band = flamelet.band(X = xx, B = 10, alpha = 0.05,
++                    tseq = seq(0, .75, length.out = 500), diag.fun = kde,
++                    h.grid = seq(0.01, 1, length.out = 40), lim = lim, by = by)
+> 
+> flamelet.plot(foo.flamelet, scale.param = seq(0.01, 1, length.out = 40),
++              tseq = seq(0, .75, length.out = 500), band = foo.band)
+> ## End(No test)
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("flamelet.plot", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+
+detaching ‘package:TDA’
+
+> nameEx("mpbandwidth")
+> ### * mpbandwidth
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: mpbandwidth
+> ### Title: Maximum Persistence Bandwidth
+> ### Aliases: mpbandwidth
+> 
+> ### ** Examples
+> 
+> ## No test: 
+> library(TDA)
+> xx = rbind(circleUnif(50, 1), circleUnif(50, 1.5) + 3)
+> Xlim = c(-1, 5);  Ylim = c(-1, 5);  by = 0.05
+> lim = cbind(Xlim, Ylim)
+> foo.flamelet = build.flamelet(X = xx, h.grid = seq(0.01, 1, length.out = 40),
++ base.type = "landscape", dimension = 1,base.param = 1, lim = lim, by = by,
++                             tseq = seq(0, .75, length.out = 500))
+> mpband(flamelet = foo.flamelet, scale.param = seq(0.01, 1, length.out = 40))
+Error in mpband(flamelet = foo.flamelet, scale.param = seq(0.01, 1, length.out = 40)) : 
+  could not find function "mpband"
+Execution halted
